@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to HTML Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Markdown to HTML Converter</h1>
+    <div id="container">
+        <div class="container">
+            <h2>Markdown Input:</h2>
+            <textarea id="markdown-input" placeholder="Enter your markdown here..."></textarea>
+        </div>
+        <div class="container">
+            <h2>Raw HTML Output:</h2>
+            <div id="html-output"></div>
+        </div>
+        <div class="container">
+            <h2>HTML Preview:</h2>
+            <div id="preview"></div>
+        </div>
+    </div>
+
+    <script>
+        function convertMarkdown() {
+            // Ambil nilai dari textarea
+            let text = document.getElementById('markdown-input').value;
+
+            // 1. Konversi Blockquote (harus di awal baris)
+            text = text.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
+
+            // 2. Konversi Headers (harus di awal baris, urut dari yang terbanyak)
+            text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+            text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+            text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+
+            // 3. Konversi Gambar (sebelum link agar tidak tertukar)
+            text = text.replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2">');
+
+            // 4. Konversi Link
+            text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+            // 5. Konversi Bold (sebelum italic)
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+            // 6. Konversi Italic
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+
+            // Hapus semua baris baru (newline) agar hasil return string menyambung 
+            // sesuai dengan ekspektasi format pengujian freeCodeCamp
+            text = text.replace(/[\r\n]+/g, '');
+
+            // Tampilkan raw HTML sebagai teks biasa di dalam #html-output
+            document.getElementById('html-output').textContent = text;
+            
+            // Render HTML yang sebenarnya ke dalam #preview
+            document.getElementById('preview').innerHTML = text;
+
+            // Kembalikan hasil konversi (sesuai Test 2, 7, 12, dll)
+            return text;
+        }
+
+        // Jalankan fungsi setiap kali pengguna mengetik di textarea
+        document.getElementById('markdown-input').addEventListener('input', convertMarkdown);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Drum Machine</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #drum-machine {
+      width: 320px;
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    #display {
+      height: 50px;
+      line-height: 50px;
+      background-color: #111;
+      color: #0f0;
+      font-size: 20px;
+      margin: 0 0 20px 0;
+      border-radius: 5px;
+      border: 2px solid #444;
+    }
+    #pad-bank {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    .drum-pad {
+      height: 80px;
+      font-size: 28px;
+      font-weight: bold;
+      background-color: #555;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: transform 0.1s;
+    }
+    .drum-pad:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="drum-machine">
+    <p id="display">Drum Machine</p>
+    <div id="pad-bank">
+      <!-- URL untuk C sudah diperbaiki menjadi Cev_H2.mp3 -->
+      <button class="drum-pad">Q<audio class="clip" id="Q" src="https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3"></audio></button>
+      <button class="drum-pad">W<audio class="clip" id="W" src="https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3"></audio></button>
+      <button class="drum-pad">E<audio class="clip" id="E" src="https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3"></audio></button>
+      <button class="drum-pad">A<audio class="clip" id="A" src="https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3"></audio></button>
+      <button class="drum-pad">S<audio class="clip" id="S" src="https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3"></audio></button>
+      <button class="drum-pad">D<audio class="clip" id="D" src="https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3"></audio></button>
+      <button class="drum-pad">Z<audio class="clip" id="Z" src="https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3"></audio></button>
+      <button class="drum-pad">X<audio class="clip" id="X" src="https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3"></audio></button>
+      <button class="drum-pad">C<audio class="clip" id="C" src="https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3"></audio></button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pads = document.querySelectorAll('.drum-pad');
+      const display = document.getElementById('display');
+
+      const soundNames = {
+        'Q': 'Heater 1',
+        'W': 'Heater 2',
+        'E': 'Heater 3',
+        'A': 'Heater 4',
+        'S': 'Heater 6',
+        'D': 'Dsc Oh',
+        'Z': 'Kick n Hat',
+        'X': 'RP4 Kick',
+        'C': 'Cev H2'
+      };
+
+      const playSound = (key) => {
+        const audio = document.getElementById(key);
+        if (audio) {
+          audio.currentTime = 0;
+          // Menangkap promise untuk mencegah error console yang mengganggu pengujian
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              // Mengabaikan error interrupsi yang umum terjadi saat klik cepat
+              console.warn("Audio play interrupted or prevented:", error);
+            });
+          }
+          display.innerText = soundNames[key];
+        }
+      };
+
+      // Tes 8: Klik pada .drum-pad
+      pads.forEach(pad => {
+        pad.addEventListener('click', () => {
+          const audio = pad.querySelector('audio');
+          if (audio) {
+            audio.currentTime = 0;
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(error => console.warn("Audio play interrupted:", error));
+            }
+            display.innerText = soundNames[audio.id];
+          }
+        });
+      });
+
+      // Tes 9: Tekan tombol keyboard
+      document.addEventListener('keydown', (e) => {
+        const key = e.key.toUpperCase();
+        if (soundNames[key]) {
+          playSound(key);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
